@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
-import { PageHero } from "@/components/PageHero";
-import { PowerSessionButton } from "@/components/PowerSessionButton";
 import { CTASection } from "@/components/CTASection";
 import { DiscoverySessionButton } from "@/components/DiscoverySessionButton";
 import { SessionGlyph } from "@/components/SessionGlyph";
 import { Reveal } from "@/components/motion";
 import { ProofBar } from "@/components/power-session/ProofBar";
-import { VslSection } from "@/components/power-session/VslSection";
+import { PsHero } from "@/components/power-session/PsHero";
 import { WhatItIs } from "@/components/power-session/WhatItIs";
 import { Deliverables } from "@/components/power-session/Deliverables";
 import { Fit } from "@/components/power-session/Fit";
@@ -98,30 +96,7 @@ function DiscoveryAside() {
 export default function PowerSessionPage() {
   return (
     <>
-      <PageHero
-        eyebrow="Power Session · 90 min 1:1"
-        title="90 minutos que te ahorran meses de prueba y error."
-        accentWords={["prueba", "y", "error"]}
-        lead={
-          <p>
-            Noventa minutos conmigo, no con un vendedor. Audito tu prospección, tus ventas y tu automatización con IA, y sales con
-            un diagnóstico escrito y tres movimientos en el orden correcto.
-          </p>
-        }
-        actions={
-          <>
-            <PowerSessionButton section="ps_hero" className="px-8 py-4 text-lg" />
-            <p className="t-mono text-[11px] uppercase leading-relaxed tracking-[0.14em] text-muted sm:ml-3">
-              <span className="block">{SITE.powerSessionPrice} · Pago único</span>
-              <span className="block">Solo 4 sesiones por semana</span>
-            </p>
-          </>
-        }
-        image="/img/rik-frame.webp"
-        imageAlt="Rik Landeros encuadrando su rostro con las manos, como quien enfoca un diagnóstico"
-        imageClassName="object-cover object-[50%_30%]"
-      />
-      <VslSection />
+      <PsHero />
       <ProofBar />
       <WhatItIs />
       <Deliverables />
