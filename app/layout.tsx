@@ -3,6 +3,7 @@ import { Inter, Inter_Tight, Instrument_Serif, JetBrains_Mono } from "next/font/
 import localFont from "next/font/local";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { SiteChrome } from "@/components/SiteChrome";
 import { MotionProvider } from "@/components/motion";
 import { SITE } from "@/lib/site";
 import { jsonLd } from "@/lib/jsonld";
@@ -93,9 +94,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     >
       <body className="grain">
         <MotionProvider>
-          <Navbar />
+          <SiteChrome>
+            <Navbar />
+          </SiteChrome>
           <main id="contenido">{children}</main>
-          <Footer />
+          <SiteChrome>
+            <Footer />
+          </SiteChrome>
         </MotionProvider>
         <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(personLd)} />
       </body>
