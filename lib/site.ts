@@ -29,7 +29,7 @@ export const OG_BASE = {
   siteName: SITE.name,
   locale: SITE.locale,
   type: "website" as const,
-  images: [{ url: "/og/og-riklanderos.jpg", width: 1200, height: 630, alt: "Rik Landeros — Consultor de IA para empresas" }],
+  images: [{ url: "/og/og-riklanderos-v2.jpg", width: 1200, height: 630, alt: "Rik Landeros — Consultor de IA para empresas" }],
 };
 
 export const NAV_LINKS = [

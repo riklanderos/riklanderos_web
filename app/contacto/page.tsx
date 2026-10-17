@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     url: "/contacto",
     title: "Contacto · Rik Landeros",
     description: DESCRIPTION,
-    images: [{ url: "/og/og-riklanderos.jpg", width: 1200, height: 630, alt: "Contacto · Rik Landeros" }],
+    images: [{ url: "/og/og-riklanderos-v2.jpg", width: 1200, height: 630, alt: "Contacto · Rik Landeros" }],
   },
 };
 

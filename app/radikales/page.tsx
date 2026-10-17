@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     url: "/radikales",
     title: "Radikales: empresarios que construyen su libertad",
     description: DESCRIPTION,
-    images: [{ url: "/og/og-riklanderos.jpg", width: 1200, height: 630, alt: "Radikales · Rik Landeros" }],
+    images: [{ url: "/og/og-riklanderos-v2.jpg", width: 1200, height: 630, alt: "Radikales · Rik Landeros" }],
   },
 };
 

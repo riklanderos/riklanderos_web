@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     description: DESCRIPTION,
     locale: SITE.locale,
     siteName: SITE.name,
-    images: [{ url: "/og/og-riklanderos.jpg", width: 1200, height: 630, alt: "Rik Landeros — Consultor de IA para empresas" }],
+    images: [{ url: "/og/og-riklanderos-v2.jpg", width: 1200, height: 630, alt: "Rik Landeros — Consultor de IA para empresas" }],
   },
 };
 

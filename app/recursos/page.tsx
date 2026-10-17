@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     url: "/recursos",
     title: "Recursos para ver tu negocio como sistema · Rik Landeros",
     description: DESCRIPTION,
-    images: [{ url: "/og/og-riklanderos.jpg", width: 1200, height: 630, alt: "Recursos · Rik Landeros" }],
+    images: [{ url: "/og/og-riklanderos-v2.jpg", width: 1200, height: 630, alt: "Recursos · Rik Landeros" }],
   },
 };
 

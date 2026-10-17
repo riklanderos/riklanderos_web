@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og/og-riklanderos.jpg",
+        url: "/og/og-riklanderos-v2.jpg",
         width: 1200,
         height: 630,
         alt: "Rik Landeros — Consultor de IA para empresas",

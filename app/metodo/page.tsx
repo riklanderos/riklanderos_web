@@ -26,13 +26,13 @@ export const metadata: Metadata = {
     siteName: SITE.name,
     title: `${TITLE} · Rik Landeros`,
     description: DESCRIPTION,
-    images: [{ url: "/og/og-riklanderos.jpg", width: 1200, height: 630, alt: "Rik Landeros — Método Sistema Radikal" }],
+    images: [{ url: "/og/og-riklanderos-v2.jpg", width: 1200, height: 630, alt: "Rik Landeros — Método Sistema Radikal" }],
   },
   twitter: {
     card: "summary_large_image",
     title: `${TITLE} · Rik Landeros`,
     description: DESCRIPTION,
-    images: ["/og/og-riklanderos.jpg"],
+    images: ["/og/og-riklanderos-v2.jpg"],
   },
 };
 

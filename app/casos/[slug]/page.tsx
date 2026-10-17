@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: "article",
       images: [
         {
-          url: "/og/og-riklanderos.jpg",
+          url: "/og/og-riklanderos-v2.jpg",
           width: 1200,
           height: 630,
           alt: `Caso ${c.client} · Rik Landeros`,
@@ -111,7 +111,7 @@ export default async function CasePage({ params }: Props) {
         datePublished: c.publishedAt,
         dateModified: c.publishedAt,
         articleSection: "Casos",
-        image: `${SITE.url}/og/og-riklanderos.jpg`,
+        image: `${SITE.url}/og/og-riklanderos-v2.jpg`,
         about: { "@type": "Thing", name: c.industry },
         author: {
           "@type": "Person",

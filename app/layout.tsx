@@ -47,10 +47,10 @@ export const metadata: Metadata = {
     siteName: SITE.name,
     title: SITE.title,
     description: SITE.description,
-    images: [{ url: "/og/og-riklanderos.jpg", width: 1200, height: 630, alt: "Rik Landeros — Consultor de IA para empresas" }],
+    images: [{ url: "/og/og-riklanderos-v2.jpg", width: 1200, height: 630, alt: "Rik Landeros — Consultor de IA para empresas" }],
   },
   // Sin title/description: Next los toma del openGraph (o title/description) de cada página.
-  twitter: { card: "summary_large_image", images: ["/og/og-riklanderos.jpg"] },
+  twitter: { card: "summary_large_image", images: ["/og/og-riklanderos-v2.jpg"] },
   // Sin canonical global: cada página declara el suyo (un canonical heredado apuntaría todo a "/").
 };
 
