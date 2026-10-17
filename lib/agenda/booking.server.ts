@@ -135,7 +135,14 @@ export type ReservationResult =
   | { kind: "confirmed"; when: string; meetLink: string | null }
   | { kind: "checkout"; url: string };
 
-export async function reserve(type: SessionType, form: BookingForm, startIso: string, origin: string | null): Promise<ReservationResult> {
+/** baseUrl: dominio al que Stripe regresa al cliente (el público, o la URL de prueba desde donde se reservó). */
+export async function reserve(
+  type: SessionType,
+  form: BookingForm,
+  startIso: string,
+  origin: string | null,
+  baseUrl: string = SITE.url,
+): Promise<ReservationResult> {
   await assertSlotFree(type, startIso);
   const cal = calendarFor(type);
   const props = { [P.type]: type, [P.email]: form.email.slice(0, 200), [P.name]: form.fullName.slice(0, 120) };
@@ -184,8 +191,8 @@ export async function reserve(type: SessionType, form: BookingForm, startIso: st
       expires_at: Math.floor(Date.now() / 1000) + HOLD_MINUTES * 60,
       metadata: { rl_event: hold.id, rl_tipo: "power", rl_inicio: startIso },
       payment_intent_data: { description: `Power Session · ${form.businessName} · ${formatSlotEs(startIso)}` },
-      success_url: `${SITE.url}/agendar/confirmado?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${SITE.url}/agendar/power-session?pago=cancelado&apartado=${encodeURIComponent(hold.id)}`,
+      success_url: `${baseUrl}/agendar/confirmado?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${baseUrl}/agendar/power-session?pago=cancelado&apartado=${encodeURIComponent(hold.id)}`,
       locale: "es-419",
     });
     await patchEvent(cal, hold.id, {

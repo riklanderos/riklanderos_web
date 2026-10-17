@@ -1,5 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { reserve, SlotTakenError } from "@/lib/agenda/booking.server";
+import { isAdminHost } from "@/lib/agenda/connect.server";
+import { SITE } from "@/lib/site";
 import { EMPTY_FORM, validateForm, type BookingForm, type SessionType } from "@/lib/agenda/config";
 
 export const runtime = "nodejs";
@@ -45,7 +47,10 @@ export async function POST(req: NextRequest) {
   if (!start || Number.isNaN(Date.parse(start))) return NextResponse.json({ ok: false, error: "Elige un horario." }, { status: 422 });
 
   try {
-    const result = await reserve(type, form, new Date(start).toISOString(), str(body.origen, 80) || null);
+    // Las reservas hechas desde una URL de prueba de Vercel regresan ahí después de Stripe; las demás, al dominio público.
+    const host = req.headers.get("host");
+    const baseUrl = isAdminHost(host) ? `https://${host}` : SITE.url;
+    const result = await reserve(type, form, new Date(start).toISOString(), str(body.origen, 80) || null, baseUrl);
     return NextResponse.json({ ok: true, ...result });
   } catch (e) {
     if (e instanceof SlotTakenError) return NextResponse.json({ ok: false, error: e.message, slotTaken: true }, { status: 409 });
