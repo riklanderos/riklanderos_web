@@ -1,0 +1,519 @@
+@import "tailwindcss";
+
+/* ──────────────────────────────────────────────────────────────
+   RIK LANDEROS — tokens
+   Paleta del brandbook 2025 (01 #0B0C0D · 03 #B3B3B3 · 04 #646564
+   · 05 #EBD9C0 · 06 #E51C1E) + escala de superficies para la web.
+   ────────────────────────────────────────────────────────────── */
+:root {
+  --bg: #0b0c0d;
+  --bg-elev: #121416;
+  --bg-elev-2: #191c1f;
+  --line: #24282d;
+  --line-strong: #383d43;
+  --line-input: #73777d; /* borde de campos de formulario: ≥3:1 sobre --bg y --bg-elev (WCAG 1.4.11) */
+  --fg: #f4f4f2;
+  --fg-muted: #a9adb2;
+  --fg-dim: #646564;
+  --accent: #e51c1e;
+  --accent-soft: #ff4a43;
+  --accent-hover: #c41a1c; /* hover de botones rojos: blanco encima 5.98:1 */
+  --accent-text: #ff5a52; /* rojo legible para texto pequeño (AA sobre --bg) */
+  --accent-paper: #b3151a; /* rojo para texto pequeño sobre --paper (5:1) */
+  --paper: #ebd9c0;
+  --paper-soft: #f3e8d8;
+  --paper-fg: #0b0c0d;
+  --paper-muted: #4a4239;
+
+  --container: 1240px;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-elev: var(--bg-elev);
+  --color-elev-2: var(--bg-elev-2);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-line-input: var(--line-input);
+  --color-fg: var(--fg);
+  --color-muted: var(--fg-muted);
+  --color-dim: var(--fg-dim);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-text: var(--accent-text);
+  --color-accent-paper: var(--accent-paper);
+  --color-paper: var(--paper);
+  --color-paper-soft: var(--paper-soft);
+  --color-paper-fg: var(--paper-fg);
+  --color-paper-muted: var(--paper-muted);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-inter-tight), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-serif: var(--font-instrument), ui-serif, Georgia, serif;
+  --font-brush: var(--font-brush), var(--font-inter-tight), sans-serif;
+
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  /* ── Base ─────────────────────────────────────────────────── */
+  html {
+    background: var(--bg);
+    color-scheme: dark;
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 88px;
+  }
+
+  /* /historia en móvil/tablet: la barra de capítulos fija suma ~55px bajo el navbar. */
+  @media (max-width: 1023px) {
+    html:has(#capitulo-01) {
+      scroll-padding-top: 136px;
+    }
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  @media (min-width: 1024px) {
+    body {
+      font-size: 18px;
+    }
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent-soft);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* Sobre papel el rojo claro no llega a 3:1: anillo en tinta (14:1). */
+  .bg-paper :focus-visible {
+    outline-color: var(--paper-fg);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.035em;
+    line-height: 1.02;
+    font-weight: 800;
+    text-wrap-style: balance;
+  }
+
+  p {
+    text-wrap-style: pretty;
+  }
+
+}
+
+@layer components {
+  /* ── Escala tipográfica (spec 4.3) ───────────────────────── */
+  .t-h1 {
+    font-size: clamp(2.6rem, 6.4vw, 5.75rem);
+    line-height: 0.96;
+    letter-spacing: -0.045em;
+  }
+  .t-h2 {
+    font-size: clamp(2rem, 4.2vw, 3.6rem);
+    line-height: 1.02;
+  }
+  .t-h3 {
+    font-size: 1.5rem;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+  .t-lead {
+    font-size: clamp(1.05rem, 1.4vw, 1.25rem);
+    line-height: 1.6;
+    color: var(--fg-muted);
+  }
+  .t-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+    font-weight: 500;
+  }
+  .t-mono {
+    font-family: var(--font-mono);
+    letter-spacing: 0.02em;
+  }
+  .t-brush {
+    font-family: var(--font-brush);
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    line-height: 0.9;
+  }
+
+  /* ── Layout ──────────────────────────────────────────────── */
+  .container-x {
+    width: 100%;
+    max-width: var(--container);
+    margin-inline: auto;
+    padding-inline: 16px;
+  }
+  @media (min-width: 640px) {
+    .container-x {
+      padding-inline: 28px;
+    }
+  }
+  @media (min-width: 1024px) {
+    .container-x {
+      padding-inline: 40px;
+    }
+  }
+
+  .section {
+    padding-block: 64px;
+    position: relative;
+  }
+  @media (min-width: 1024px) {
+    .section {
+      padding-block: 120px;
+    }
+  }
+
+  .measure {
+    max-width: 720px;
+  }
+
+  /* ── Texturas de blueprint ───────────────────────────────── */
+  .bg-dots {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+    background-size: 64px 64px;
+  }
+  .mask-fade-y {
+    mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
+  }
+  .mask-fade-b {
+    mask-image: linear-gradient(to bottom, #000 55%, transparent);
+  }
+  .mask-radial {
+    mask-image: radial-gradient(ellipse at center, #000 30%, transparent 72%);
+  }
+
+
+  /* ── Componentes utilitarios ─────────────────────────────── */
+  .card {
+    background: var(--bg-elev);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+  }
+
+  .hairline {
+    height: 1px;
+    background: var(--line);
+  }
+
+  .link-underline {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.4s var(--ease-out);
+  }
+  .link-underline:hover {
+    background-size: 100% 1px;
+  }
+
+  /* Foco de luz que sigue al cursor (lo alimenta <Tilt>: --mx/--my). El elemento necesita position y overflow-hidden. */
+  .spotlight::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%), color-mix(in srgb, var(--accent) 16%, transparent), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.4s var(--ease-out);
+  }
+  .spotlight:hover::before {
+    opacity: 1;
+  }
+
+  /* Borde con brillo rojo que recorre la tarjeta destacada */
+  .border-sheen {
+    position: relative;
+    isolation: isolate;
+  }
+  .border-sheen::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    z-index: -1;
+    border-radius: inherit;
+    padding: 1px;
+    background: conic-gradient(from var(--sheen-angle, 0deg), transparent 0deg, var(--accent) 60deg, transparent 120deg, transparent 360deg);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    /* Unas vueltas al cargar, no infinito: el conic-gradient se repinta en cada frame. */
+    animation: sheen-spin 6s linear 3;
+  }
+
+  /* Marquee de logos */
+  .marquee-track {
+    animation: marquee 38s linear infinite;
+    width: max-content;
+  }
+  .marquee:hover .marquee-track,
+  .marquee:focus-within .marquee-track {
+    animation-play-state: paused;
+  }
+
+  /* Pulso del indicador "agenda abierta" */
+  .ping-soft {
+    animation: ping-soft 2.2s var(--ease-out) 3;
+  }
+
+  /* Detalles del acordeón */
+  details > summary {
+    list-style: none;
+  }
+  details > summary::-webkit-details-marker {
+    display: none;
+  }
+
+}
+
+/* Grano editorial global (estilo de referencias del brandbook) */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: -50%;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.055;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@property --sheen-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+@keyframes sheen-spin {
+  to {
+    --sheen-angle: 360deg;
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes ping-soft {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  80%,
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .marquee-track {
+    animation: none;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Capa de animación v2 (micro-interacciones). Solo opacity/transform.
+   ────────────────────────────────────────────────────────────── */
+@layer components {
+  /* Tarjeta viva: foco de luz bajo el contenido + borde que se ilumina donde está el cursor.
+     La alimenta <TiltCard> (--mx/--my). Sin overflow-hidden obligatorio; no se combina con .border-sheen. */
+  .spot {
+    position: relative;
+    isolation: isolate;
+  }
+  .spot::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(
+      380px circle at var(--mx, 50%) var(--my, 0%),
+      color-mix(in srgb, var(--accent) 13%, transparent),
+      transparent 62%
+    );
+    opacity: 0;
+    transition: opacity 0.5s var(--ease-out);
+  }
+  .spot::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    pointer-events: none;
+    background: radial-gradient(
+      240px circle at var(--mx, 50%) var(--my, 0%),
+      color-mix(in srgb, var(--accent-soft) 90%, transparent),
+      transparent 70%
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.5s var(--ease-out);
+  }
+  /* Sobre papel: foco más contenido para no ensuciar el crema. */
+  .spot-paper::before {
+    background: radial-gradient(
+      380px circle at var(--mx, 50%) var(--my, 0%),
+      color-mix(in srgb, var(--accent) 9%, transparent),
+      transparent 62%
+    );
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .spot:hover::before,
+    .spot:hover::after {
+      opacity: 1;
+    }
+  }
+  .spot:has(:focus-visible)::after {
+    opacity: 1;
+  }
+
+  /* Texto en contorno para la tipografía cinética. Color del trazo con --stroke. */
+  .text-outline {
+    -webkit-text-fill-color: transparent;
+    -webkit-text-stroke: var(--stroke-w, 1.5px) var(--stroke, color-mix(in srgb, var(--fg) 26%, transparent));
+  }
+
+  /* Subrayado que entra por la izquierda y sale por la derecha. */
+  .link-sweep {
+    position: relative;
+  }
+  .link-sweep::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -3px;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right center;
+    transition: transform 0.45s var(--ease-out);
+  }
+  /* .sweep-host: tarjeta-enlace completa que activa el subrayado de su etiqueta. */
+  .link-sweep:hover::after,
+  .link-sweep:focus-visible::after,
+  .group:hover > .link-sweep::after,
+  .sweep-host:hover .link-sweep::after,
+  .sweep-host:focus-visible .link-sweep::after {
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
+
+  /* Brillo diagonal que cruza el botón al pasar el cursor (botones fantasma y píldoras). */
+  .btn-shine {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .btn-shine::after {
+    content: "";
+    position: absolute;
+    inset: -2px auto -2px 0;
+    width: 45%;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(100deg, transparent, color-mix(in srgb, var(--fg) 14%, transparent), transparent);
+    transform: translateX(-120%) skewX(-18deg);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .btn-shine:hover::after {
+      transform: translateX(260%) skewX(-18deg);
+      transition: transform 0.85s var(--ease-out);
+    }
+  }
+
+  /* Celda de logo: esquinas de plano que aparecen en hover (rejillas de clientes). */
+  .logo-cell {
+    position: relative;
+  }
+  .logo-cell::before,
+  .logo-cell::after {
+    content: "";
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    pointer-events: none;
+    opacity: 0;
+    transform: scale(0.4);
+    transition:
+      opacity 0.35s var(--ease-out),
+      transform 0.45s var(--ease-out);
+  }
+  .logo-cell::before {
+    top: 10px;
+    left: 10px;
+    border-top: 1px solid var(--accent);
+    border-left: 1px solid var(--accent);
+    transform-origin: top left;
+  }
+  .logo-cell::after {
+    right: 10px;
+    bottom: 10px;
+    border-right: 1px solid var(--accent);
+    border-bottom: 1px solid var(--accent);
+    transform-origin: bottom right;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .logo-cell:hover::before,
+    .logo-cell:hover::after {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+}

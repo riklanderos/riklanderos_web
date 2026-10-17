@@ -1,0 +1,7 @@
+.next
+.next-prod
+.next-review
+node_modules
+.env*
+!.env.example
+tsconfig.tsbuildinfo
