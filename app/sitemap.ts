@@ -9,6 +9,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/metodo",
     "/power-session",
     "/agendar",
+    "/agendar/power-session",
+    "/agendar/discovery",
     "/trabajar-conmigo",
     "/casos",
     "/historia",

@@ -7,7 +7,7 @@ import { track } from "@/lib/analytics";
 import { useMagnetic } from "./motion";
 import { Arrow, btn } from "./ui";
 
-/** CTA de la Discovery Session de Ingeniak. Misma pestaña + UTMs por sección y efecto magnético, como la Power Session. */
+/** CTA de la Discovery Session de Ingeniak. Lleva a la agenda propia (/agendar/discovery) con la sección de origen y efecto magnético, como la Power Session. */
 export function DiscoverySessionButton({
   section,
   label = "Agenda tu Discovery Session",

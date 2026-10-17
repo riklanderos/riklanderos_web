@@ -5,12 +5,13 @@ export const SITE = {
   description:
     "Consultor de inteligencia artificial para empresas y fundador de Ingeniak. 14 años en marketing. Leo tu negocio completo, te digo qué te está frenando y construyo el sistema —branding, marketing, ventas e IA en el orden correcto— que lo hace crecer sin ti.",
   locale: "es_MX",
-  powerSessionUrl: "https://agenda.ingeniak.tech/powersession",
+  /** Agenda propia (Google Calendar + Stripe). Absoluta para JSON-LD; los enlaces usan la ruta relativa. */
+  powerSessionUrl: "https://www.riklanderos.tech/agendar/power-session",
   powerSessionAmount: 297,
   powerSessionCurrency: "USD",
   powerSessionPrice: "297 USD",
-  /** Discovery Session de Ingeniak: 30 min para diagnosticar la operación (CTA del VSL "La silla vacía"). */
-  discoverySessionUrl: "https://agenda.ingeniak.tech/discovery",
+  /** Discovery Session: 30 min sin costo para diagnosticar la operación (CTA del VSL "La silla vacía"). */
+  discoverySessionUrl: "https://www.riklanderos.tech/agendar/discovery",
   ingeniakUrl: "https://ingeniak.mx",
   email: "hola@riklanderos.com",
   socials: {
@@ -41,22 +42,20 @@ export const NAV_LINKS = [
   { href: "/recursos", label: "Recursos" },
 ] as const;
 
-function withUtm(url: string, campaign: string, section: string) {
-  const params = new URLSearchParams({
-    utm_source: "riklanderos",
-    utm_medium: "web",
-    utm_campaign: campaign,
-    utm_content: section,
-  });
-  return `${url}?${params.toString()}`;
+/**
+ * Enlace interno a la agenda con la sección de origen en ?desde= (no UTMs: en enlaces internos reinician la
+ * sesión de analítica). La agenda guarda ese origen en la descripción del evento de Google Calendar.
+ */
+function bookingHref(url: string, section: string) {
+  return `${new URL(url).pathname}?${new URLSearchParams({ desde: section }).toString()}`;
 }
 
-/** URL de la Power Session con UTMs por sección (spec §9.2). */
+/** Ruta de la agenda de la Power Session con la sección de origen (spec §9.2). */
 export function powerSessionHref(section: string) {
-  return withUtm(SITE.powerSessionUrl, "powersession", section);
+  return bookingHref(SITE.powerSessionUrl, section);
 }
 
-/** URL de la Discovery Session con UTMs por sección (mismo esquema que la Power Session). */
+/** Ruta de la agenda de la Discovery Session con la sección de origen. */
 export function discoverySessionHref(section: string) {
-  return withUtm(SITE.discoverySessionUrl, "discovery", section);
+  return bookingHref(SITE.discoverySessionUrl, section);
 }

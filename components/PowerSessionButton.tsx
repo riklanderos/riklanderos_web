@@ -7,7 +7,7 @@ import { track } from "@/lib/analytics";
 import { useMagnetic } from "./motion";
 import { Arrow, btn } from "./ui";
 
-/** CTA principal del sitio. Misma pestaña + UTMs por sección (spec §9.2) y efecto magnético con el mouse. */
+/** CTA principal del sitio. Lleva a la agenda propia (/agendar/power-session) con la sección de origen (spec §9.2) y efecto magnético. */
 export function PowerSessionButton({
   section,
   label = "Agenda tu Power Session",
