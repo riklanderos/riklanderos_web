@@ -17,6 +17,7 @@ import {
 } from "./config";
 import { AgendaConfigError } from "./connect.server";
 import { deleteEvent, freeBusy, getEvent, insertEvent, listEvents, patchEvent, type CalEvent } from "./google.server";
+import { bookingAttribution, markBookingExpired, markBookingExpiredByEvent, markBookingPaid, recordBookingLead, type BookingAttribution } from "./leads.server";
 import { stripeClient } from "./stripe.server";
 
 /* ── Calendarios ─────────────────────────────────────────────── */
@@ -142,6 +143,7 @@ export async function reserve(
   startIso: string,
   origin: string | null,
   baseUrl: string = SITE.url,
+  attribution: BookingAttribution = bookingAttribution(null),
 ): Promise<ReservationResult> {
   await assertSlotFree(type, startIso);
   const cal = calendarFor(type);
@@ -158,6 +160,8 @@ export async function reserve(
       withMeet: true,
       privateProps: { ...props, [P.state]: "confirmada" },
     });
+    // Después del evento: si Supabase falla, la cita ya quedó y el visitante igual recibe el Meet.
+    await recordBookingLead({ type, form, startIso, origin, eventId: ev.id, attribution });
     return { kind: "confirmed", when: formatSlotEs(startIso), meetLink: ev.hangoutLink ?? null };
   }
 
@@ -170,6 +174,7 @@ export async function reserve(
     privateProps: { ...props, [P.state]: "pendiente" },
   });
 
+  let paid: { url: string; stripeSessionId: string };
   try {
     const stripe = await stripeClient();
     const session = await stripe.checkout.sessions.create({
@@ -203,11 +208,22 @@ export async function reserve(
       privateProps: { ...props, [P.state]: "pendiente", [P.stripe]: session.id },
     });
     if (!session.url) throw new Error("Stripe no devolvió URL de pago");
-    return { kind: "checkout", url: session.url };
+    paid = { url: session.url, stripeSessionId: session.id };
   } catch (e) {
     await deleteEvent(cal, hold.id).catch(() => {});
     throw e;
   }
+  // Fuera del catch: un fallo al guardar el lead no borra el apartado ni el Checkout.
+  await recordBookingLead({
+    type,
+    form,
+    startIso,
+    origin,
+    eventId: hold.id,
+    attribution,
+    stripeSessionId: paid.stripeSessionId,
+  });
+  return { kind: "checkout", url: paid.url };
 }
 
 /** Convierte un apartado pagado en la cita real: invita al cliente y crea el Google Meet. Idempotente. */
@@ -216,6 +232,9 @@ export async function confirmPower(eventId: string): Promise<{ when: string; mee
   const ev = await getEvent(cal, eventId);
   const props = ev.extendedProperties?.private ?? {};
   const startIso = ev.start?.dateTime ? new Date(ev.start.dateTime).toISOString() : "";
+  // También en el retorno temprano (cita ya confirmada): si el primer UPDATE falló, este lo reintenta.
+  // El filtro de la fila hace que solo se escriba una vez.
+  await markBookingPaid(props[P.stripe]);
   if (props[P.state] === "confirmada") return { when: formatSlotEs(startIso), meetLink: ev.hangoutLink ?? null };
   const desc = await getDescription(cal, eventId);
   const name = props[P.name] ?? "";
@@ -244,6 +263,8 @@ export async function confirmFromCheckout(sessionId: string) {
   const eventId = s.metadata?.rl_event;
   if (!eventId) throw new Error("Pago sin cita asociada");
   if (s.payment_status !== "paid") return { paid: false as const };
+  // Antes de tocar Calendar: el pago ya está hecho y el correo "Pagado" no depende de que el evento siga existiendo.
+  await markBookingPaid(sessionId);
   const r = await confirmPower(eventId);
   return { paid: true as const, ...r, email: s.customer_details?.email ?? s.customer_email ?? null };
 }
@@ -251,14 +272,33 @@ export async function confirmFromCheckout(sessionId: string) {
 /** Libera un apartado si el cliente canceló en Stripe (solo si sigue pendiente y su pago no se completó). */
 export async function releaseHold(eventId: string) {
   const cal = calendarFor("power");
-  const ev = await getEvent(cal, eventId).catch(() => null);
-  const props = ev?.extendedProperties?.private;
-  if (!ev || props?.[P.state] !== "pendiente") return;
-  if (props[P.stripe]) {
+  let ev: CalEvent | null = null;
+  try {
+    ev = await getEvent(cal, eventId);
+  } catch (e) {
+    // 404/410: el apartado ya se borró. Si el lead sigue pendiente, se marca expirado por eventId.
+    // Otro error (red) no se trata como liberación: el cron lo vuelve a intentar.
+    if (e instanceof Error && /Google Calendar (404|410):/.test(e.message)) await markBookingExpiredByEvent(eventId);
+    return;
+  }
+  const props = ev.extendedProperties?.private;
+  if (props?.[P.state] !== "pendiente") {
+    // Ya confirmada: no se libera. Se reintenta "pagado" por si el UPDATE anterior no llegó.
+    if (props?.[P.state] === "confirmada") await markBookingPaid(props[P.stripe]);
+    return;
+  }
+  const stripeId = props[P.stripe];
+  if (stripeId) {
     const stripe = await stripeClient();
-    const s = await stripe.checkout.sessions.retrieve(props[P.stripe]);
-    if (s.payment_status === "paid") return void (await confirmPower(eventId));
+    const s = await stripe.checkout.sessions.retrieve(stripeId);
+    if (s.payment_status === "paid") {
+      await confirmPower(eventId);
+      return;
+    }
     if (s.status === "open") await stripe.checkout.sessions.expire(s.id).catch(() => {});
+    await markBookingExpired(stripeId);
+  } else {
+    await markBookingExpiredByEvent(eventId);
   }
   await deleteEvent(cal, eventId);
 }
@@ -276,6 +316,7 @@ export async function sweepHolds(now = new Date()) {
   for (const ev of events) {
     const sid = ev.extendedProperties?.private?.[P.stripe];
     if (!sid || !stripe) {
+      await markBookingExpiredByEvent(ev.id);
       await deleteEvent(cal, ev.id);
       result.liberados++;
       continue;
@@ -287,6 +328,7 @@ export async function sweepHolds(now = new Date()) {
     } else if (s.status === "expired" || (s.status === "open" && s.expires_at * 1000 < now.getTime())) {
       // Stripe marca las sesiones vencidas con retraso: si ya pasó su hora, se vence aquí mismo.
       if (s.status === "open") await stripe.checkout.sessions.expire(s.id).catch(() => {});
+      await markBookingExpired(sid);
       await deleteEvent(cal, ev.id);
       result.liberados++;
     }
