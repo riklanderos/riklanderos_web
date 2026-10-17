@@ -25,6 +25,7 @@ import {
 } from "@/lib/brief/questions";
 import { track } from "@/lib/analytics";
 import { useSafeReducedMotion } from "../motion";
+import { Logo } from "../Logo";
 import { Arrow, btn } from "../ui";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -192,8 +193,9 @@ export function BriefFlow({ token, initial, transcripts: initialTranscripts, fir
 
 function TopBar({ step, pct, save, onJump }: { step: number; pct: number; save: Save; onJump: (s: number) => void }) {
   return (
-    <div className="sticky top-14 z-30 border-b border-line bg-bg/85 backdrop-blur-md lg:top-16">
+    <div className="sticky top-0 z-30 border-b border-line bg-bg/85 backdrop-blur-md">
       <div className="container-x flex items-center gap-4 py-3">
+        <Logo variant="iso" className="h-6 w-auto shrink-0 text-accent" />
         <ol className="flex flex-1 gap-1.5" aria-label="Pisos del brief">
           {STEPS.map((f, i) => (
             <li key={f.id} className="flex-1">
@@ -233,12 +235,15 @@ function Welcome({ firstName, business, when, started, onStart }: { firstName: s
   return (
     <section className="relative isolate overflow-hidden lg:flex lg:min-h-[100svh] lg:items-center">
       <div aria-hidden className="bg-grid mask-radial absolute inset-0 -z-20 opacity-60" />
-      <div className="absolute inset-x-0 top-14 -z-10 h-[min(100vw,560px)] lg:inset-y-0 lg:left-auto lg:right-0 lg:top-0 lg:h-auto lg:w-[52%]">
+      <div className="container-x absolute inset-x-0 top-0 z-10 pt-5 lg:pt-8">
+        <Logo className="h-8 w-auto text-fg" />
+      </div>
+      <div className="absolute inset-x-0 top-0 -z-10 h-[min(100vw,560px)] lg:inset-y-0 lg:left-auto lg:right-0 lg:h-auto lg:w-[52%]">
         <Image src="/img/rik-glasses.webp" alt="" fill priority sizes="(min-width:1024px) 52vw, 100vw" className="object-cover [object-position:50%_25%]" />
         <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/30 to-transparent lg:bg-gradient-to-r lg:from-bg lg:via-bg/20 lg:to-transparent" />
         <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-bg/80 to-transparent" />
       </div>
-      <div className="container-x relative pb-16 pt-[calc(min(100vw,560px)-1rem)] lg:pb-0 lg:pt-24">
+      <div className="container-x relative pb-16 pt-[calc(min(100vw,560px)-4rem)] lg:pb-0 lg:pt-16">
         <div className="max-w-[600px] lg:max-w-[46%]">
           <motion.p {...enter(0.1)} className="t-eyebrow flex items-center gap-3">
             <span aria-hidden className="h-px w-6 bg-accent" />
@@ -999,6 +1004,9 @@ function Done({ firstName, when, onEdit }: { firstName: string; when: string | n
         className="absolute left-1/2 top-1/2 -z-10 h-[60vh] w-[60vh] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-25 blur-[120px]"
         style={{ background: "radial-gradient(circle, var(--accent) 0%, transparent 65%)" }}
       />
+      <div className="absolute inset-x-0 top-0 flex justify-center pt-6">
+        <Logo className="h-8 w-auto text-fg" />
+      </div>
       <div className="max-w-[640px]">
         <motion.span
           className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-accent text-white"
