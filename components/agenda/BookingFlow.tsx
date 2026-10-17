@@ -22,6 +22,7 @@ import {
   type FormErrors,
   type SessionType,
 } from "@/lib/agenda/config";
+import { UTM_KEYS, type UtmKey } from "@/content/leads";
 import { track } from "@/lib/analytics";
 import { SITE } from "@/lib/site";
 import { useSafeReducedMotion } from "../motion";
@@ -31,7 +32,53 @@ type Step = 1 | 2 | 3;
 type Confirmed = { when: string; meetLink: string | null };
 
 const STORAGE = (t: SessionType) => `rl_agenda_${t}`;
+const UTM_STORAGE_KEY = "rl_utm";
 const EASE = [0.22, 1, 0.36, 1] as const;
+
+type AttributionPayload = Partial<Record<UtmKey, string>> & { referrer?: string; page_path?: string; zona?: string };
+
+/** UTMs de la URL o de la primera visita (misma clave que el resto de formularios), más referrer y ruta. */
+function readAttribution(zona: string | null): AttributionPayload {
+  const out: AttributionPayload = {};
+  try {
+    const params = new URLSearchParams(window.location.search);
+    let found = false;
+    for (const k of UTM_KEYS) {
+      const v = params.get(k)?.trim();
+      if (v) {
+        out[k] = v.slice(0, 200);
+        found = true;
+      }
+    }
+    if (found) {
+      const utmOnly: Partial<Record<UtmKey, string>> = {};
+      for (const k of UTM_KEYS) if (out[k]) utmOnly[k] = out[k];
+      try {
+        sessionStorage.setItem(UTM_STORAGE_KEY, JSON.stringify(utmOnly));
+      } catch {
+        /* almacenamiento bloqueado */
+      }
+    } else {
+      try {
+        const saved = sessionStorage.getItem(UTM_STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved) as Partial<Record<UtmKey, string>>;
+          for (const k of UTM_KEYS) {
+            if (typeof parsed?.[k] === "string" && parsed[k]) out[k] = parsed[k].slice(0, 200);
+          }
+        }
+      } catch {
+        /* sin UTMs guardadas */
+      }
+    }
+    if (document.referrer && !document.referrer.startsWith(window.location.origin)) out.referrer = document.referrer.slice(0, 500);
+    out.page_path = window.location.pathname.slice(0, 300);
+    if (zona) out.zona = zona.slice(0, 80);
+  } catch {
+    /* sin window: la reserva sigue sin atribución */
+  }
+  return out;
+}
 
 /**
  * Agenda en tres pasos: datos del negocio → horario (próximos 5 días hábiles, leídos de Google Calendar)
@@ -45,6 +92,7 @@ export function BookingFlow({ type, canceled = false }: { type: SessionType; can
   const topRef = useRef<HTMLDivElement>(null);
   const startedAt = useRef(0);
   const origin = useRef<string | null>(null);
+  const attribution = useRef<AttributionPayload>({});
 
   const [step, setStep] = useState<Step>(1);
   const [form, setForm] = useState<BookingForm>(EMPTY_FORM);
@@ -89,12 +137,15 @@ export function BookingFlow({ type, canceled = false }: { type: SessionType; can
         if (canceled && !Object.keys(validateForm(type, f)).length) setStep(2);
       }
     } catch {}
+    let zona: string | null = null;
     try {
       const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      if (tz) zona = tz;
       if (tz && tz !== CDMX_TZ) setLocalTz(tz);
     } catch {}
     const p = new URLSearchParams(window.location.search);
     origin.current = [p.get("desde") && `Sección: ${p.get("desde")}`, p.get("utm_source"), p.get("utm_campaign"), p.get("utm_content")].filter(Boolean).join(" · ") || null;
+    attribution.current = readAttribution(zona);
     if (canceled) {
       window.history.replaceState(null, "", window.location.pathname);
       // Regresó de Stripe: directo al formulario, no al hero.
@@ -147,6 +198,7 @@ export function BookingFlow({ type, canceled = false }: { type: SessionType; can
           form,
           start: slot,
           origen: origin.current,
+          atribucion: attribution.current,
           website_url: honey,
           elapsed_ms: Date.now() - startedAt.current,
         }),
