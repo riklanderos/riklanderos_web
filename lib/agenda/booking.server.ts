@@ -284,7 +284,9 @@ export async function sweepHolds(now = new Date()) {
     if (s.payment_status === "paid") {
       await confirmPower(ev.id);
       result.confirmados++;
-    } else if (s.status === "expired") {
+    } else if (s.status === "expired" || (s.status === "open" && s.expires_at * 1000 < now.getTime())) {
+      // Stripe marca las sesiones vencidas con retraso: si ya pasó su hora, se vence aquí mismo.
+      if (s.status === "open") await stripe.checkout.sessions.expire(s.id).catch(() => {});
       await deleteEvent(cal, ev.id);
       result.liberados++;
     }
