@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Power Session confirmada", robots: { index: false, follow: false } };
 
 type State =
-  | { kind: "ok"; when: string; meetLink: string | null; email: string | null }
+  | { kind: "ok"; when: string; meetLink: string | null; email: string | null; brief: string | null }
   | { kind: "pending" }
   | { kind: "error" };
 
@@ -19,7 +19,7 @@ export default async function Confirmado({ searchParams }: { searchParams: Promi
   if (session_id && /^cs_(live|test)_[A-Za-z0-9]+$/.test(session_id)) {
     try {
       const r = await confirmFromCheckout(session_id);
-      state = r.paid ? { kind: "ok", when: r.when, meetLink: r.meetLink, email: r.email } : { kind: "pending" };
+      state = r.paid ? { kind: "ok", when: r.when, meetLink: r.meetLink, email: r.email, brief: r.brief } : { kind: "pending" };
     } catch (e) {
       console.error("[agenda] confirmado:", e instanceof Error ? e.message : e);
     }
@@ -44,9 +44,22 @@ export default async function Confirmado({ searchParams }: { searchParams: Promi
               enlace de Google Meet, y Stripe te manda el recibo por separado. Llega con tus números a la mano: ventas del último mes y
               cuántos prospectos atiendes.
             </p>
-            <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+            {state.brief ? (
+              <div className="mt-10 rounded-[14px] border border-accent/50 bg-accent/10 p-6">
+                <p className="t-eyebrow !text-fg">Siguiente paso · 8–10 min</p>
+                <p className="mt-3 text-[17px] leading-relaxed text-fg">
+                  Llena tu brief para que llegue con tu operación ya leída. Puedes contestar con audio y subir capturas de tus anuncios o
+                  reportes. Se guarda solo y el link también va en tu invitación.
+                </p>
+                <a href={state.brief} className={`${btn.primary} btn-shine mt-6 px-8 py-4 text-lg`}>
+                  Llenar mi brief
+                  <Arrow />
+                </a>
+              </div>
+            ) : null}
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               {state.meetLink ? (
-                <a href={state.meetLink} target="_blank" rel="noopener noreferrer" className={btn.primary}>
+                <a href={state.meetLink} target="_blank" rel="noopener noreferrer" className={state.brief ? btn.ghost : btn.primary}>
                   Abrir enlace de Meet
                   <Arrow />
                 </a>

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
@@ -63,6 +64,7 @@ export default async function AgendaAdmin({
     <main className="container-x pb-24 pt-32">
       <p className="t-eyebrow">Administración · privada</p>
       <h1 className="t-h2 mt-4">Conexiones de la agenda</h1>
+      <Link href="/admin/briefs" className="mt-4 inline-block text-[15px] text-accent-text underline underline-offset-4">Ver briefs de Power Session →</Link>
       <p className="t-lead mt-4 max-w-[680px]">
         Esta página solo existe en la dirección interna de Vercel. Conecta tus
         cuentas una vez; la agenda usa ese permiso para leer tu disponibilidad,

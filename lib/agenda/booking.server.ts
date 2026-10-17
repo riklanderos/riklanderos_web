@@ -19,6 +19,7 @@ import { AgendaConfigError } from "./connect.server";
 import { deleteEvent, freeBusy, getEvent, insertEvent, listEvents, patchEvent, type CalEvent } from "./google.server";
 import { bookingAttribution, markBookingExpired, markBookingExpiredByEvent, markBookingPaid, recordBookingLead, type BookingAttribution } from "./leads.server";
 import { stripeClient } from "./stripe.server";
+import { briefUrl, ensureBrief } from "@/lib/brief/server";
 
 /* ── Calendarios ─────────────────────────────────────────────── */
 
@@ -227,7 +228,7 @@ export async function reserve(
 }
 
 /** Convierte un apartado pagado en la cita real: invita al cliente y crea el Google Meet. Idempotente. */
-export async function confirmPower(eventId: string): Promise<{ when: string; meetLink: string | null }> {
+export async function confirmPower(eventId: string): Promise<{ when: string; meetLink: string | null; brief: string | null }> {
   const cal = calendarFor("power");
   const ev = await getEvent(cal, eventId);
   const props = ev.extendedProperties?.private ?? {};
@@ -235,20 +236,31 @@ export async function confirmPower(eventId: string): Promise<{ when: string; mee
   // También en el retorno temprano (cita ya confirmada): si el primer UPDATE falló, este lo reintenta.
   // El filtro de la fila hace que solo se escriba una vez.
   await markBookingPaid(props[P.stripe]);
-  if (props[P.state] === "confirmada") return { when: formatSlotEs(startIso), meetLink: ev.hangoutLink ?? null };
-  const desc = await getDescription(cal, eventId);
   const name = props[P.name] ?? "";
-  const business = (ev.summary ?? "").split("Power Session · ")[1] ?? name;
+  const business = ((ev.summary ?? "").split("Power Session · ")[1] ?? name).replace(/\s*\([^)]*\)$/, "");
+  // Brief previo (idempotente): el link va en la invitación y en la página de confirmación.
+  const token = await ensureBrief({
+    eventId,
+    stripeSessionId: props[P.stripe] ?? null,
+    name,
+    email: props[P.email] ?? null,
+    business,
+    sessionStart: startIso || null,
+  });
+  const brief = token ? briefUrl(token) : null;
+  if (props[P.state] === "confirmada") return { when: formatSlotEs(startIso), meetLink: ev.hangoutLink ?? null, brief };
+  const desc = await getDescription(cal, eventId);
+  const briefLine = brief ? `Antes de la sesión, llena tu brief (8–10 min, puedes contestar con audio):\n${brief}\n\n` : "";
   const updated = await patchEvent(cal, eventId, {
     summary: `Power Session · ${business} (${name})`,
-    description: desc.replace(/\n\nAgendado desde/, "\n\nPago confirmado en Stripe.\n\nAgendado desde"),
+    description: briefLine + desc.replace(/\n\nAgendado desde/, "\n\nPago confirmado en Stripe.\n\nAgendado desde"),
     startIso,
     endIso: ev.end?.dateTime ? new Date(ev.end.dateTime).toISOString() : endIso("power", startIso),
     attendeeEmail: props[P.email],
     withMeet: true,
     privateProps: { ...props, [P.state]: "confirmada" },
   });
-  return { when: formatSlotEs(startIso), meetLink: updated.hangoutLink ?? null };
+  return { when: formatSlotEs(startIso), meetLink: updated.hangoutLink ?? null, brief };
 }
 
 async function getDescription(cal: string, eventId: string): Promise<string> {

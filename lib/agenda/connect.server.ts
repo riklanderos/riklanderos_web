@@ -38,11 +38,12 @@ export async function connectorAuthUrl(key: ConnectorKey, callbackUrl: string): 
 }
 
 /**
- * La administración solo responde en las URLs únicas de cada despliegue (riklanderos-<hash>-ingeniak.vercel.app),
+ * La administración solo responde en las URLs internas de Vercel (riklanderos-<hash>-ingeniak.vercel.app y el alias fijo),
  * que Vercel protege con inicio de sesión del equipo. En los dominios públicos no existe.
  */
 export function isAdminHost(host: string | null): boolean {
   if (!host) return false;
   if (process.env.NODE_ENV !== "production") return /^(localhost|127\.0\.0\.1)(:\d+)?$/.test(host);
-  return /^riklanderos-[a-z0-9]{9}-ingeniak\.vercel\.app$/.test(host);
+  // URL de cada despliegue y alias fijo del proyecto (riklanderos-web-ingeniak.vercel.app): ambos piden login de Vercel.
+  return /^riklanderos-[a-z0-9]{9}-ingeniak\.vercel\.app$/.test(host) || /^riklanderos-web-(git-main-)?ingeniak\.vercel\.app$/.test(host);
 }
