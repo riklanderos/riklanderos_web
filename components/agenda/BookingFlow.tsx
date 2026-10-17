@@ -95,7 +95,11 @@ export function BookingFlow({ type, canceled = false }: { type: SessionType; can
     } catch {}
     const p = new URLSearchParams(window.location.search);
     origin.current = [p.get("desde") && `Sección: ${p.get("desde")}`, p.get("utm_source"), p.get("utm_campaign"), p.get("utm_content")].filter(Boolean).join(" · ") || null;
-    if (canceled) window.history.replaceState(null, "", window.location.pathname);
+    if (canceled) {
+      window.history.replaceState(null, "", window.location.pathname);
+      // Regresó de Stripe: directo al formulario, no al hero.
+      requestAnimationFrame(() => topRef.current?.scrollIntoView({ block: "start" }));
+    }
     track("booking_view", { tipo: type, desde: p.get("desde") ?? undefined });
   }, [type, canceled, loadDays]);
 
