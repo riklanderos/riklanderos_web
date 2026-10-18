@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Inter_Tight, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import localFont from "next/font/local";
+import { Analytics } from "@vercel/analytics/next";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { SiteChrome } from "@/components/SiteChrome";
@@ -103,6 +104,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           </SiteChrome>
         </MotionProvider>
         <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(personLd)} />
+        <Analytics />
       </body>
     </html>
   );
