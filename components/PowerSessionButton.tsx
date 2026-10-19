@@ -4,10 +4,11 @@ import clsx from "clsx";
 import { motion } from "motion/react";
 import { powerSessionHref } from "@/lib/site";
 import { track } from "@/lib/analytics";
+import { scrollIfSamePage } from "@/lib/booking-link";
 import { useMagnetic } from "./motion";
 import { Arrow, btn } from "./ui";
 
-/** CTA principal del sitio. Lleva a la agenda propia (/agendar/power-session) con la sección de origen (spec §9.2) y efecto magnético. */
+/** CTA principal del sitio. Lleva a /power-session con la sección de origen (spec §9.2); dentro de esa página baja al formulario. Efecto magnético. */
 export function PowerSessionButton({
   section,
   label = "Agenda tu Power Session",
@@ -25,7 +26,10 @@ export function PowerSessionButton({
       {...magnetic}
       href={powerSessionHref(section)}
       className={clsx(btn[variant], className)}
-      onClick={() => track("cta_powersession_click", { section })}
+      onClick={(e) => {
+        track("cta_powersession_click", { section });
+        scrollIfSamePage(e, powerSessionHref(section));
+      }}
     >
       {label}
       <Arrow className="transition-transform duration-300 group-hover:translate-x-1" />

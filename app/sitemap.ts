@@ -9,8 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/metodo",
     "/power-session",
     "/agendar",
-    "/agendar/power-session",
-    "/agendar/discovery",
+    "/discovery",
     "/trabajar-conmigo",
     "/casos",
     "/historia",
@@ -25,7 +24,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${SITE.url}${r}`,
       lastModified: now,
       changeFrequency: "monthly" as const,
-      priority: r === "" ? 1 : r === "/power-session" || r === "/agendar" ? 0.9 : 0.7,
+      priority: r === "" ? 1 : r === "/power-session" || r === "/discovery" || r === "/agendar" ? 0.9 : 0.7,
     })),
     ...CASES.map((c) => ({ url: `${SITE.url}/casos/${c.slug}`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.6 })),
   ];

@@ -1,5 +1,8 @@
+import type { ReactNode } from "react";
 import type { SessionType } from "@/lib/agenda/config";
 import { SESSIONS } from "@/lib/sessions";
+import { videoLdHtml } from "@/lib/videos";
+import { VslPlayer } from "../VslPlayer";
 import { Reveal } from "../motion";
 import { Eyebrow } from "../ui";
 import { BookingFlow } from "./BookingFlow";
@@ -10,12 +13,35 @@ const STEPS: Record<SessionType, readonly string[]> = {
   discovery: ["Me cuentas de tu negocio", "Eliges día y hora", "Te llega la invitación con Meet"],
 };
 
-/** Página de agenda: hero épico con Rik y, debajo, el flujo de reserva con lo que te llevas al lado. */
-export function BookingPage({ type, canceled = false }: { type: SessionType; canceled?: boolean }) {
+/**
+ * Página única de cada sesión (/power-session, /discovery): hero épico con Rik → VSL → reserva (lo que te llevas
+ * al lado) → contenido extra opcional (children) debajo del formulario.
+ */
+export function BookingPage({ type, canceled = false, children }: { type: SessionType; canceled?: boolean; children?: ReactNode }) {
   const s = SESSIONS[type];
+  const v = s.video;
   return (
     <>
       <BookingHero type={type} />
+      <section id="video" aria-labelledby={`${type}-video`} className="relative border-t border-line">
+        <div className="container-x py-14 lg:py-20">
+          <Reveal className="mx-auto flex max-w-[1120px] flex-col gap-2 md:flex-row md:items-center md:justify-between">
+            <h2 id={`${type}-video`} className="t-eyebrow !font-medium leading-relaxed">
+              La {s.name}, en video · «{v.title}»
+            </h2>
+            <p className="t-mono text-[11px] uppercase tracking-[0.14em] text-muted">Video · {v.duration} · Activa el sonido</p>
+          </Reveal>
+          <Reveal delay={0.1} className="relative mx-auto mt-8 max-w-[1120px]">
+            <div
+              aria-hidden
+              className="absolute -inset-4 -z-10 rounded-[20px] opacity-50 blur-3xl"
+              style={{ background: "radial-gradient(ellipse at center, rgba(229,28,30,0.35), transparent 70%)" }}
+            />
+            <VslPlayer video={v} sizes="(min-width: 1200px) 1120px, 92vw" />
+          </Reveal>
+        </div>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: videoLdHtml(v) }} />
+      </section>
       <section id="agenda" className="relative scroll-mt-16 border-t border-line pb-20 pt-14 lg:pb-32 lg:pt-24">
         <div className="container-x grid gap-10 lg:grid-cols-12 lg:gap-14">
           <div className="lg:col-span-5">
@@ -59,6 +85,7 @@ export function BookingPage({ type, canceled = false }: { type: SessionType; can
           </Reveal>
         </div>
       </section>
+      {children}
     </>
   );
 }

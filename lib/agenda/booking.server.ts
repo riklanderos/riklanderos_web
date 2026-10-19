@@ -198,7 +198,7 @@ export async function reserve(
       metadata: { rl_event: hold.id, rl_tipo: "power", rl_inicio: startIso },
       payment_intent_data: { description: `Power Session · ${form.businessName} · ${formatSlotEs(startIso)}` },
       success_url: `${baseUrl}/agendar/confirmado?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${baseUrl}/agendar/power-session?pago=cancelado&apartado=${encodeURIComponent(hold.id)}`,
+      cancel_url: `${baseUrl}/power-session?pago=cancelado&apartado=${encodeURIComponent(hold.id)}`,
       locale: "es-419",
     });
     await patchEvent(cal, hold.id, {

@@ -5,13 +5,13 @@ export const SITE = {
   description:
     "Consultor de inteligencia artificial para empresas y fundador de Ingeniak. 14 años en marketing. Leo tu negocio completo, te digo qué te está frenando y construyo el sistema —branding, marketing, ventas e IA en el orden correcto— que lo hace crecer sin ti.",
   locale: "es_MX",
-  /** Agenda propia (Google Calendar + Stripe). Absoluta para JSON-LD; los enlaces usan la ruta relativa. */
-  powerSessionUrl: "https://www.riklanderos.tech/agendar/power-session",
+  /** Página única de cada sesión: información, video y agenda (Google Calendar + Stripe). Absoluta para JSON-LD; los enlaces usan la ruta relativa. */
+  powerSessionUrl: "https://www.riklanderos.tech/power-session",
   powerSessionAmount: 297,
   powerSessionCurrency: "USD",
   powerSessionPrice: "297 USD",
   /** Discovery Session: 30 min sin costo para diagnosticar la operación (CTA del VSL "La silla vacía"). */
-  discoverySessionUrl: "https://www.riklanderos.tech/agendar/discovery",
+  discoverySessionUrl: "https://www.riklanderos.tech/discovery",
   ingeniakUrl: "https://ingeniak.mx",
   email: "hola@riklanderos.com",
   socials: {

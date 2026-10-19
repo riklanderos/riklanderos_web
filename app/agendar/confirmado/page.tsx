@@ -92,7 +92,7 @@ export default async function Confirmado({ searchParams }: { searchParams: Promi
               </a>
               .
             </p>
-            <Link href="/agendar/power-session" className={`${btn.ghost} mt-10`}>
+            <Link href="/power-session#agenda" className={`${btn.ghost} mt-10`}>
               Volver a la agenda
             </Link>
           </>

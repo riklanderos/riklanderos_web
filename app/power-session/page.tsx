@@ -4,7 +4,8 @@ import { DiscoverySessionButton } from "@/components/DiscoverySessionButton";
 import { SessionGlyph } from "@/components/SessionGlyph";
 import { Reveal } from "@/components/motion";
 import { ProofBar } from "@/components/power-session/ProofBar";
-import { PsHero } from "@/components/power-session/PsHero";
+import { BookingPage } from "@/components/agenda/BookingPage";
+import { releaseHold } from "@/lib/agenda/booking.server";
 import { WhatItIs } from "@/components/power-session/WhatItIs";
 import { Deliverables } from "@/components/power-session/Deliverables";
 import { Fit } from "@/components/power-session/Fit";
@@ -93,10 +94,21 @@ function DiscoveryAside() {
   );
 }
 
-export default function PowerSessionPage() {
+export const dynamic = "force-dynamic";
+
+/**
+ * Página única de la Power Session: hero épico → video → reserva con pago → toda la información de la sesión.
+ * Stripe regresa aquí con ?pago=cancelado&apartado=<evento> cuando el cliente no paga.
+ */
+export default async function PowerSessionPage({ searchParams }: { searchParams: Promise<{ pago?: string; apartado?: string }> }) {
+  const { pago, apartado } = await searchParams;
+  const canceled = pago === "cancelado";
+  // Regresó de Stripe sin pagar: se libera el apartado antes de mostrar la disponibilidad.
+  if (canceled && apartado && /^[a-z0-9_-]{5,1024}$/i.test(apartado)) {
+    await releaseHold(apartado).catch((e) => console.error("[agenda] liberar:", e instanceof Error ? e.message : e));
+  }
   return (
-    <>
-      <PsHero />
+    <BookingPage type="power" canceled={canceled}>
       <ProofBar />
       <WhatItIs />
       <Deliverables />
@@ -116,6 +128,6 @@ export default function PowerSessionPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceLd).replace(/</g, "\\u003c") }}
       />
-    </>
+    </BookingPage>
   );
 }
