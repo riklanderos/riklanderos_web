@@ -97,10 +97,12 @@ export function Footer() {
       </div>
 
       {/* Cierre: la brocha pinta "Haz que suceda" y el isotipo se traza y se rellena como firma. */}
-      <div className="container-x flex items-end justify-between gap-3" aria-hidden>
+      {/* La frase se mide contra el espacio que deja el isotipo (unidades de contenedor): así nunca queda
+          debajo de él, aunque el navegador tenga otro tamaño de letra base. ~6.1em es lo que ocupa la frase. */}
+      <div className="container-x flex items-end justify-between gap-3 [container-type:inline-size]" aria-hidden>
         <WipeReveal
           as="p"
-          className="t-brush min-w-0 select-none whitespace-nowrap text-[clamp(2.9rem,11vw,10.5rem)] leading-[1.05] text-elev-2"
+          className="t-brush min-w-0 select-none whitespace-nowrap text-[min(10.5rem,calc((100cqw-clamp(2.75rem,7.5vw,7rem)*0.86-0.75rem)/6.1))] leading-[1.05] text-elev-2"
           duration={1.4}
         >
           Haz que suceda

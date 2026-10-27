@@ -85,7 +85,7 @@ export default async function ArticuloPage({ params }: Props) {
           </div>
 
           {/* Respuesta corta: lo que citan buscadores e IAs */}
-          <Reveal className="mt-12 max-w-[860px]" delay={0.05}>
+          <Reveal className="mt-12" delay={0.05}>
             <section aria-label="La respuesta corta" data-blog="respuesta" className="card border-l-2 !border-l-accent p-7 md:p-9">
               <p className="t-eyebrow">La respuesta corta</p>
               <p className="mt-4 text-[1.15rem] leading-relaxed text-fg md:text-[1.3rem]">{a.respuestaDirecta}</p>
