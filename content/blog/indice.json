@@ -63,5 +63,18 @@
       "src": "/blog/embudo-de-ventas/portada.webp",
       "alt": "Rik Landeros con el pulgar abajo junto a un embudo de ventas agujereado que pierde agua por todos lados"
     }
+  },
+  {
+    "slug": "ventas-b2b-con-ia",
+    "titulo": "Ventas B2B con IA: cómo cerrar más sin contratar más",
+    "metaDescription": "Descubre cómo usar IA en tus ventas B2B: prospecta, da seguimiento y cierra más con un sistema comercial, sin ampliar tu equipo.",
+    "categoria": "Ventas",
+    "publicado": "2026-10-27",
+    "actualizado": "2026-10-27",
+    "minutos": 7,
+    "portada": {
+      "src": "/blog/ventas-b2b-con-ia/portada.webp",
+      "alt": "RIK LANDEROS observa cómo la IA libera a un vendedor de montañas de papeleo en ventas B2B"
+    }
   }
 ]
