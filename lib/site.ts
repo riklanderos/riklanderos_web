@@ -1,3 +1,5 @@
+import BLOG_INDICE from "@/content/blog/indice.json";
+
 export const SITE = {
   name: "Rik Landeros",
   url: "https://www.riklanderos.tech",
@@ -33,6 +35,9 @@ export const OG_BASE = {
   images: [{ url: "/og/og-riklanderos-v2.jpg", width: 1200, height: 630, alt: "Rik Landeros — Consultor de IA para empresas" }],
 };
 
+/** El blog entra al menú solo cuando ya tiene artículos publicados (content/blog/indice.json). */
+const HAY_BLOG = (BLOG_INDICE as unknown[]).length > 0;
+
 export const NAV_LINKS = [
   { href: "/metodo", label: "Método" },
   { href: "/trabajar-conmigo", label: "Trabajar conmigo" },
@@ -40,6 +45,7 @@ export const NAV_LINKS = [
   { href: "/historia", label: "Historia" },
   { href: "/radikales", label: "Radikales" },
   { href: "/recursos", label: "Recursos" },
+  ...(HAY_BLOG ? [{ href: "/blog", label: "Blog" }] : []),
 ] as const;
 
 /**

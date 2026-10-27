@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { ARTICULOS } from "@/lib/blog";
 import { CASES } from "@/lib/content";
 import { SITE } from "@/lib/site";
 
@@ -27,5 +28,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: r === "" ? 1 : r === "/power-session" || r === "/discovery" || r === "/agendar" ? 0.9 : 0.7,
     })),
     ...CASES.map((c) => ({ url: `${SITE.url}/casos/${c.slug}`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.6 })),
+    ...(ARTICULOS.length ? [{ url: `${SITE.url}/blog`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.7 }] : []),
+    ...ARTICULOS.map((a) => ({
+      url: `${SITE.url}/blog/${a.slug}`,
+      lastModified: new Date(a.actualizado),
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
   ];
 }
