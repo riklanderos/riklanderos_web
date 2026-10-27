@@ -76,5 +76,18 @@
       "src": "/blog/ventas-b2b-con-ia/portada.webp",
       "alt": "RIK LANDEROS observa cómo la IA libera a un vendedor de montañas de papeleo en ventas B2B"
     }
+  },
+  {
+    "slug": "anuncios-sin-estrategia",
+    "titulo": "Anuncios sin estrategia son dinero perdido: los 4 pilares",
+    "metaDescription": "Descubre los pilares que necesitas antes de pagar anuncios: branding, marketing, ventas, data e IA. Construye un sistema y deja de perder dinero.",
+    "categoria": "Marketing",
+    "publicado": "2026-10-27",
+    "actualizado": "2026-10-27",
+    "minutos": 7,
+    "portada": {
+      "src": "/blog/anuncios-sin-estrategia/portada.webp",
+      "alt": "RIK LANDEROS mete billetes en un megáfono que los dispersa al viento: anuncios sin estrategia son dinero perdido"
+    }
   }
 ]
