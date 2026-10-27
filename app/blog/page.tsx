@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { CTASection } from "@/components/CTASection";
 import { PageHero } from "@/components/PageHero";
@@ -51,6 +52,17 @@ export default function BlogPage() {
                   href={`/blog/${principal.slug}`}
                   className="group card grid gap-8 p-8 transition-[border-color,transform] duration-500 hover:-translate-y-1 hover:border-line-strong md:p-12 lg:grid-cols-12"
                 >
+                  {principal.portada && (
+                    <Image
+                      src={principal.portada.src}
+                      alt={principal.portada.alt}
+                      width={1600}
+                      height={900}
+                      priority
+                      sizes="(min-width: 1280px) 1150px, 100vw"
+                      className="w-full rounded-[12px] lg:col-span-12"
+                    />
+                  )}
                   <div className="lg:col-span-8">
                     <p className="t-mono text-[11px] uppercase tracking-[0.16em] text-accent-text">{principal.categoria}</p>
                     <h3 className="mt-5 font-display text-3xl font-extrabold leading-[1.05] tracking-[-0.03em] md:text-5xl">{principal.titulo}</h3>
@@ -75,6 +87,16 @@ export default function BlogPage() {
                         href={`/blog/${a.slug}`}
                         className="group card flex h-full flex-col p-7 transition-[border-color,transform] duration-500 hover:-translate-y-1 hover:border-line-strong"
                       >
+                        {a.portada && (
+                          <Image
+                            src={a.portada.src}
+                            alt={a.portada.alt}
+                            width={1600}
+                            height={900}
+                            sizes="(min-width: 1024px) 360px, (min-width: 768px) 45vw, 100vw"
+                            className="mb-6 w-full rounded-[10px]"
+                          />
+                        )}
                         <span className="t-mono text-[11px] uppercase tracking-[0.16em] text-accent-text">{a.categoria}</span>
                         <span className="mt-5 font-display text-2xl font-extrabold leading-[1.1] tracking-tight">{a.titulo}</span>
                         <span className="mt-3 flex-1 text-[15px] text-muted">{a.metaDescription}</span>

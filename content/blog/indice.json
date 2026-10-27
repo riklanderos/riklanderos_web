@@ -1,1 +1,67 @@
-[]
+[
+  {
+    "slug": "por-que-tu-negocio-no-crece",
+    "titulo": "¿Por qué mi negocio no crece si trabajo más que nunca?",
+    "metaDescription": "Trabajas más, pautas más y vendes igual. No es falta de esfuerzo: tu negocio tiene fugas entre marketing, ventas y seguimiento. Así las encuentras.",
+    "categoria": "Estrategia",
+    "publicado": "2026-10-27",
+    "actualizado": "2026-10-27",
+    "minutos": 7,
+    "portada": {
+      "src": "/blog/por-que-tu-negocio-no-crece/portada.webp",
+      "alt": "Rik Landeros vierte dinero en un balde con agujeros que lo pierde por todos lados: las fugas que frenan tu negocio"
+    }
+  },
+  {
+    "slug": "como-delegar-en-tu-negocio",
+    "titulo": "Cómo delegar en tu negocio sin que todo se caiga cuando no estás",
+    "metaDescription": "¿Nadie hace las cosas bien si no estás? Delega resultados, no tareas: qué documentar primero, reglas de decisión y qué automatizar en tu negocio.",
+    "categoria": "Estrategia",
+    "publicado": "2026-10-27",
+    "actualizado": "2026-10-27",
+    "minutos": 8,
+    "portada": {
+      "src": "/blog/como-delegar-en-tu-negocio/portada.webp",
+      "alt": "Rik Landeros de brazos cruzados con todos los cables de la oficina conectados a él mientras su equipo espera"
+    }
+  },
+  {
+    "slug": "seguimiento-de-clientes",
+    "titulo": "Seguimiento de clientes: el dinero que pierdes por contestar tarde",
+    "metaDescription": "Tu prospecto escribe y nadie contesta en horas. Las fugas del seguimiento de clientes, una cadencia sensata y lo que tu CRM sí debe registrar.",
+    "categoria": "Ventas",
+    "publicado": "2026-10-27",
+    "actualizado": "2026-10-27",
+    "minutos": 7,
+    "portada": {
+      "src": "/blog/seguimiento-de-clientes/portada.webp",
+      "alt": "Rik Landeros toma café tranquilo mientras su celular se llena de mensajes sin contestar y un cliente se va"
+    }
+  },
+  {
+    "slug": "agente-de-ia-para-whatsapp",
+    "titulo": "Agente de IA para WhatsApp: qué hace, qué no y cuándo conviene",
+    "metaDescription": "Chatbot de menús vs. agente de IA para WhatsApp: qué hace bien, qué no debe hacer, por qué sin CRM es otra pieza suelta y cuándo vale la pena para tu PyME.",
+    "categoria": "IA",
+    "publicado": "2026-10-27",
+    "actualizado": "2026-10-27",
+    "minutos": 8,
+    "portada": {
+      "src": "/blog/agente-de-ia-para-whatsapp/portada.webp",
+      "alt": "Rik Landeros sostiene un engrane suelto frente a un teléfono gigante que desborda mensajes sin atender"
+    }
+  },
+  {
+    "slug": "embudo-de-ventas",
+    "titulo": "Tu embudo de ventas tiene fugas: tápalas antes de más anuncios",
+    "metaDescription": "Subir la pauta no arregla un embudo de ventas con fugas. Qué medir en cada etapa, dónde se pierden clientes y en qué orden taparlas antes de escalar.",
+    "categoria": "Marketing",
+    "publicado": "2026-10-27",
+    "actualizado": "2026-10-27",
+    "minutos": 7,
+    "portada": {
+      "src": "/blog/embudo-de-ventas/portada.webp",
+      "alt": "Rik Landeros con el pulgar abajo junto a un embudo de ventas agujereado que pierde agua por todos lados"
+    }
+  }
+]

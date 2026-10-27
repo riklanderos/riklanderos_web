@@ -11,6 +11,20 @@ import INDICE from "@/content/blog/indice.json";
  * No se editan a mano: el Estudio los regenera en cada publicación.
  */
 
+/** Imagen del artículo. Los archivos viven en public/blog/<slug>/ y los sube el Estudio en el mismo PR. */
+export type ImagenArticulo = {
+  src: string;
+  alt: string;
+  ancho: number;
+  alto: number;
+  /** portada: arriba del artículo y en Open Graph. figura: dentro del texto, con su llamado a la acción. */
+  tipo: "portada" | "figura";
+  /** La figura va al final de la sección del H2 número n (desde 1). */
+  despuesDeH2?: number;
+  cta?: "power-session" | "discovery";
+  frase?: string;
+};
+
 export type ResumenArticulo = {
   slug: string;
   titulo: string;
@@ -19,6 +33,7 @@ export type ResumenArticulo = {
   publicado: string;
   actualizado: string;
   minutos: number;
+  portada?: { src: string; alt: string };
 };
 
 export type Articulo = ResumenArticulo & {
@@ -32,6 +47,7 @@ export type Articulo = ResumenArticulo & {
   cta: string;
   autor: string;
   aprobadoPor: string | null;
+  imagenes?: ImagenArticulo[];
 };
 
 export const ARTICULOS = (INDICE as ResumenArticulo[]).toSorted((a, b) => b.publicado.localeCompare(a.publicado));
@@ -84,7 +100,10 @@ export function renderArticulo(md: string) {
   });
   // Cada tabla va en un contenedor que se desplaza en celular sin romper el ancho de la página.
   const html = (marked.parse(md, { async: false }) as string).replace(/<table>/g, '<div class="tabla"><table>').replace(/<\/table>/g, "</table></div>");
-  return { html, indice };
+  // secciones[0] es la entrada antes del primer H2; secciones[n] empieza con el H2 número n (para intercalar figuras).
+  const secciones = html.split(/(?=<h2 id=")/);
+  if (!secciones[0].startsWith("<h2")) return { html, indice, secciones };
+  return { html, indice, secciones: ["", ...secciones] };
 }
 
 const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];

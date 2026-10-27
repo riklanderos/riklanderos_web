@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Accordion } from "@/components/Accordion";
+import { FiguraBlog } from "@/components/blog/FiguraBlog";
 import { CTASection } from "@/components/CTASection";
 import { Reveal } from "@/components/motion";
 import { Eyebrow } from "@/components/ui";
@@ -22,6 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const a = getArticulo(slug);
   if (!a) return { title: "Artículo no encontrado" };
   const url = `/blog/${a.slug}`;
+  const portada = a.imagenes?.find((i) => i.tipo === "portada");
   return {
     // El meta title ya viene completo del Estudio: sin la plantilla "· Rik Landeros".
     title: { absolute: a.metaTitle },
@@ -38,6 +41,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       publishedTime: a.publicado,
       modifiedTime: a.actualizado,
       authors: [a.autor],
+      ...(portada ? { images: [{ url: portada.src, width: portada.ancho, height: portada.alto, alt: portada.alt }] } : {}),
     },
   };
 }
@@ -46,7 +50,9 @@ export default async function ArticuloPage({ params }: Props) {
   const { slug } = await params;
   const a = getArticulo(slug);
   if (!a) notFound();
-  const { html, indice } = renderArticulo(a.markdown);
+  const { secciones, indice } = renderArticulo(a.markdown);
+  const portada = a.imagenes?.find((i) => i.tipo === "portada");
+  const figuras = (a.imagenes ?? []).filter((i) => i.tipo === "figura");
   const url = `${SITE.url}/blog/${a.slug}`;
   const faqs = a.faqs.filter((f) => f.p && f.r).map((f) => ({ q: f.p, a: f.r }));
 
@@ -80,11 +86,25 @@ export default async function ArticuloPage({ params }: Props) {
 
           {/* Respuesta corta: lo que citan buscadores e IAs */}
           <Reveal className="mt-12 max-w-[860px]" delay={0.05}>
-            <section aria-label="La respuesta corta" className="card border-l-2 !border-l-accent p-7 md:p-9">
+            <section aria-label="La respuesta corta" data-blog="respuesta" className="card border-l-2 !border-l-accent p-7 md:p-9">
               <p className="t-eyebrow">La respuesta corta</p>
               <p className="mt-4 text-[1.15rem] leading-relaxed text-fg md:text-[1.3rem]">{a.respuestaDirecta}</p>
             </section>
           </Reveal>
+
+          {portada && (
+            <Reveal className="mt-10" delay={0.1}>
+              <Image
+                src={portada.src}
+                alt={portada.alt}
+                width={portada.ancho}
+                height={portada.alto}
+                priority
+                sizes="(min-width: 1280px) 1200px, 100vw"
+                className="w-full rounded-[16px] border border-line"
+              />
+            </Reveal>
+          )}
         </header>
 
         {/* Cuerpo */}
@@ -114,10 +134,19 @@ export default async function ArticuloPage({ params }: Props) {
           )}
 
           <div className={indice.length > 1 ? "lg:col-span-8 lg:col-start-5" : "lg:col-span-8 lg:col-start-3"}>
-            <div className="articulo-prosa" dangerouslySetInnerHTML={{ __html: html }} />
+            {secciones.map((seccion, n) => (
+              <div key={n}>
+                {seccion && <div className="articulo-prosa" dangerouslySetInnerHTML={{ __html: seccion }} />}
+                {figuras
+                  .filter((f) => (f.despuesDeH2 ?? 0) === n)
+                  .map((f, i) => (
+                    <FiguraBlog key={f.src} imagen={f} section={`blog_${a.slug}_figura_${n}_${i}`} />
+                  ))}
+              </div>
+            ))}
 
             {faqs.length > 0 && (
-              <section id="preguntas" aria-labelledby="t-preguntas" className="mt-20 scroll-mt-28">
+              <section id="preguntas" aria-labelledby="t-preguntas" data-blog="faq" className="mt-20 scroll-mt-28">
                 <Eyebrow>Preguntas frecuentes</Eyebrow>
                 <h2 id="t-preguntas" className="t-h3 mt-5 font-display font-extrabold">
                   Lo que más me preguntan sobre esto
@@ -129,7 +158,7 @@ export default async function ArticuloPage({ params }: Props) {
             )}
 
             {a.fuentes.length > 0 && (
-              <section aria-labelledby="t-fuentes" className="mt-16">
+              <section aria-labelledby="t-fuentes" data-blog="fuentes" className="mt-16">
                 <p id="t-fuentes" className="t-eyebrow">
                   Fuentes
                 </p>
@@ -150,7 +179,9 @@ export default async function ArticuloPage({ params }: Props) {
         </div>
       </article>
 
-      <CTASection section={`blog_${a.slug}`} eyebrow="Siguiente paso" mode={a.cta === "power-session" ? "power" : "both"} />
+      <div data-blog="cta" data-cta={a.cta}>
+        <CTASection section={`blog_${a.slug}`} eyebrow="Siguiente paso" mode={a.cta === "power-session" ? "power" : "both"} />
+      </div>
 
       <script
         type="application/ld+json"
@@ -170,6 +201,7 @@ export default async function ArticuloPage({ params }: Props) {
               keywords: [a.keyword, ...a.secundarias].join(", "),
               articleSection: a.categoria,
               author: { "@type": "Person", name: a.autor, url: SITE.url },
+              ...(a.imagenes?.length ? { image: a.imagenes.map((i) => `${SITE.url}${i.src}`) } : {}),
               publisher: { "@type": "Person", name: SITE.name, url: SITE.url },
               ...(a.fuentes.length ? { citation: a.fuentes.map((f) => ({ "@type": "CreativeWork", name: f.titulo, url: f.url })) } : {}),
             },
